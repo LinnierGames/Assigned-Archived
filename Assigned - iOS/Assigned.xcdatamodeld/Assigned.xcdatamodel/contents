@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Assignments" representedClassName="Assignment" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <entity name="Directories" representedClassName="Directory" syncable="YES" codeGenerationType="class">
+        <relationship name="children" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Directories" inverseName="parent" inverseEntity="Directories" syncable="YES"/>
+        <relationship name="info" maxCount="1" deletionRule="Cascade" destinationEntity="DirectoryInfos" inverseName="directory" inverseEntity="DirectoryInfos" syncable="YES"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Directories" inverseName="children" inverseEntity="Directories" syncable="YES"/>
+    </entity>
+    <entity name="DirectoryInfos" representedClassName="DirectoryInfo" isAbstract="YES" syncable="YES" codeGenerationType="class">
+        <attribute name="title" attributeType="String" defaultValueString="Untitled" syncable="YES"/>
+        <relationship name="directory" maxCount="1" deletionRule="Nullify" destinationEntity="Directories" inverseName="info" inverseEntity="Directories" syncable="YES"/>
+    </entity>
+    <entity name="Folders" representedClassName="Folder" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <entity name="Subjects" representedClassName="Subject" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <elements>
+        <element name="Assignments" positionX="-36" positionY="36" width="128" height="45"/>
+        <element name="Directories" positionX="-63" positionY="-18" width="128" height="90"/>
+        <element name="DirectoryInfos" positionX="-63" positionY="-18" width="128" height="75"/>
+        <element name="Folders" positionX="-45" positionY="18" width="128" height="45"/>
+        <element name="Subjects" positionX="-54" positionY="18" width="128" height="45"/>
+    </elements>
 </model>
