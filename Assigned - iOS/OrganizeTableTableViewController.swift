@@ -11,25 +11,36 @@ import CoreData
 
 class OrganizeTableTableViewController: FetchedResultsTableViewController {
     
-    var delegate: AppDelegate? {
+    private var delegate: AppDelegate? {
         return UIApplication.shared.delegate as? AppDelegate
     }
     
-    var container: NSPersistentContainer? {
+    private var container: NSPersistentContainer? {
         return delegate?.persistentContainer
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        let editingInvert = editing ? false : true
+        buttonAddItem.isEnabled = editingInvert
+        self.navigationItem.setHidesBackButton(editing, animated: true)
     }
     
     fileprivate var fetchedResultsController: NSFetchedResultsController<Directory>? {
         didSet {
-            do {
-                fetchedResultsController?.delegate = self
-                try fetchedResultsController!.performFetch()
+            if let controller = fetchedResultsController {
+                do {
+                    controller.delegate = self
+                    try controller.performFetch()
+                    
+                } catch let error {
+                    print("ERROR: \(error.localizedDescription)")
+                }
                 
-            } catch let error {
-                print("ERROR: \(error.localizedDescription)")
+                tableView.reloadData()
+                
             }
-            
-            tableView.reloadData()
             
         }
         
@@ -49,6 +60,10 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
      }
      */
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return currentDirectory?.info!.title ?? "root"
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
@@ -58,9 +73,9 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
         cell.textLabel!.text = row.info!.title
         
         if row.isDirectory {
-            cell.accessoryType = .disclosureIndicator
+            cell.accessoryType = .detailDisclosureButton
         } else {
-            cell.accessoryType = .none
+            cell.accessoryType = .detailButton
         }
         
         switch row.info! {
@@ -123,19 +138,64 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
         // Pass the selected object to the new view controller.
     }
     
-    // MARK: Table view data source
+    // MARK: Table view delegate
     
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = fetchedResultsController!.object(at: indexPath)
+        if tableView.isEditing {
+            // navController.selectedItems.append(row)
+            
+        } else {
+            if row.isDirectory {
+                let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "organize table") as! OrganizeTableTableViewController
+                vc.currentDirectory = row
+                
+                self.navigationController?.pushViewController( vc, animated: true)
+                
+            } else if row.info! is Assignment {
+                
+            } else {
+                assertionFailure("tableView:didSelectRowAt: -- failed to cast the selected object from row")
+            }
+            
+        }
+        
+    }
+    
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        let rowItem = fetchedResultsController!.object(at: indexPath)
+        let alert = UIAlertController(title: "Update Title", message: "enter a new title", preferredStyle: .alert
+        )
+        alert.addTextField { (textField) in
+            textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: rowItem.info!.title)
+        }
+        alert.addAction( UIAlertAction(title: "Discard", style: .default, handler: nil))
+        alert.addAction( UIAlertAction(title: "Save", style: .default, handler: { [weak self] (action) in
+            rowItem.info!.title = alert.textFields!.first!.text
+            
+            self!.delegate?.saveContext()
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
+    // Override to support editing the table view.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Delete the row from the data source
+            let row = fetchedResultsController!.object(at: indexPath)
+            
+            if let context = container?.viewContext {
+                context.delete(row)
+                
+                delegate?.saveContext()
+            }
+            
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
     
     /*
      // Override to support rearranging the table view.
@@ -146,41 +206,37 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
     
     // MARK: - IBACTIONS
     
-    @IBOutlet weak var buttonFolder: UIBarButtonItem!
-    @IBAction func pressAddFolder(_ sender: Any) {
-        let alert = UIAlertController(title: "Add a Folder", message: "enter a title", preferredStyle: .alert)
-        alert.addTextField { (textField) in
-            textField.autocapitalizationType = .words
-            textField.autocorrectionType = .default
-        }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
-            if let context = self!.container?.viewContext {
-                let newClass = Folder(context: context)
-                newClass.title = alert.textFields!.first!.text
-                
-                _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
-                
-                self!.delegate?.saveContext()
-                
-                self!.updateUI()
-                
-            }
-        }))
-        
-        self.present( alert, animated: true, completion: nil)
-        
-    }
-    
-    @IBOutlet weak var buttonAddItem: UIBarButtonItem!
+    @IBOutlet weak var buttonAddItem: UIButton!
     @IBAction func pressAddItem(_ sender: Any) {
         let actionType = UIAlertController(title: nil, message: "select what to add", preferredStyle: .actionSheet)
+        
+        actionType.addAction( UIAlertAction(title: "Folder", style: .default, handler: { (action) in
+            let alert = UIAlertController(title: "Add a Folder", message: "enter a title", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
+            }
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
+                if let context = self!.container?.viewContext {
+                    let newClass = Subject(context: context)
+                    newClass.title = alert.textFields!.first!.text
+                    
+                    _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
+                    
+                    self!.delegate?.saveContext()
+                    
+                    self!.updateUI()
+                    
+                }
+            }))
+            
+            self.present( alert, animated: true, completion: nil)
+        }))
         
         actionType.addAction( UIAlertAction(title: "Subject", style: .default, handler: { (action) in
             let alert = UIAlertController(title: "Add a Subject", message: "enter a title", preferredStyle: .alert)
             alert.addTextField { (textField) in
-                textField.autocapitalizationType = .words
-                textField.autocorrectionType = .default
+                textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
             }
             alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
             alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
@@ -203,8 +259,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
         actionType.addAction( UIAlertAction(title: "Assignment", style: .default, handler: { (action) in
             let alert = UIAlertController(title: "Add an Assignment", message: "enter a title", preferredStyle: .alert)
             alert.addTextField { (textField) in
-                textField.autocapitalizationType = .words
-                textField.autocorrectionType = .default
+                textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
             }
             alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
             alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
@@ -231,17 +286,23 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
     }
     
     // MARK: - LIFE CYCLE
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         updateUI()
+        
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: currentDirectory?.info!.title ?? "root", style: .plain, target: self, action: #selector(dismiss(animated:completion:)))
+        
+        self.navigationItem.rightBarButtonItem = self.editButtonItem
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.clearsSelectionOnViewWillAppear = true
+        
     }
 
     /*

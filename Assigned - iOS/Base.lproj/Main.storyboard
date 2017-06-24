@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
-        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,7 +31,6 @@
         <!--Item 1-->
         <scene sceneID="CK5-a2-9lk">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tjA-Jr-vgm" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="nsG-uY-rE2" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FOI-Dw-a4J"/>
@@ -45,13 +43,15 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 1" id="DwL-PW-so9"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tjA-Jr-vgm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="305" y="-252"/>
         </scene>
-        <!--Root View Controller-->
+        <!--Organize Table Table View Controller-->
         <scene sceneID="wWb-q8-rHz">
             <objects>
-                <tableViewController id="VjX-Pz-qVy" customClass="OrganizeTableTableViewController" customModule="Assigned" customModuleProvider="target" sceneMemberID="viewController">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rKZ-iq-YfN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController storyboardIdentifier="organize table" id="VjX-Pz-qVy" customClass="OrganizeTableTableViewController" customModule="Assigned" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="zot-eo-JDe">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -87,26 +87,22 @@
                             <outlet property="delegate" destination="VjX-Pz-qVy" id="grT-I2-t3d"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="mtD-gl-h8P">
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="d24-RF-UJm">
-                                <connections>
-                                    <action selector="pressAddItem:" destination="VjX-Pz-qVy" id="H7c-ty-TPh"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="organize" id="So4-Bc-z2A">
-                                <connections>
-                                    <action selector="pressAddFolder:" destination="VjX-Pz-qVy" id="k6b-fX-0Vh"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="mtD-gl-h8P">
+                        <nil key="title"/>
+                        <button key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="R3y-Gw-Rn8">
+                            <rect key="frame" x="112.5" y="7" width="150" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" title="+ Add Item"/>
+                            <connections>
+                                <action selector="pressAddItem:" destination="VjX-Pz-qVy" eventType="touchUpInside" id="s6b-ds-aqK"/>
+                            </connections>
+                        </button>
                     </navigationItem>
                     <connections>
-                        <outlet property="buttonAddItem" destination="d24-RF-UJm" id="sSo-sh-pqU"/>
-                        <outlet property="buttonFolder" destination="So4-Bc-z2A" id="5bW-eE-qHn"/>
+                        <outlet property="buttonAddItem" destination="R3y-Gw-Rn8" id="jke-iA-kRZ"/>
                     </connections>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rKZ-iq-YfN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1257" y="413"/>
         </scene>

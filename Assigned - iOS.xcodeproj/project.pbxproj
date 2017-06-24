@@ -18,6 +18,7 @@
 		E97C1F621EE9E76800C3B47F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E97C1F601EE9E76800C3B47F /* LaunchScreen.storyboard */; };
 		E97C1F6D1EE9E76800C3B47F /* Assigned___iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C1F6C1EE9E76800C3B47F /* Assigned___iOSTests.swift */; };
 		E97C1F781EE9E76800C3B47F /* Assigned___iOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C1F771EE9E76800C3B47F /* Assigned___iOSUITests.swift */; };
+		E9F45EE51EFEC71500170C4A /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE41EFEC71500170C4A /* Categories.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		E97C1F731EE9E76800C3B47F /* Assigned - iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Assigned - iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E97C1F771EE9E76800C3B47F /* Assigned___iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Assigned___iOSUITests.swift"; sourceTree = "<group>"; };
 		E97C1F791EE9E76800C3B47F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9F45EE41EFEC71500170C4A /* Categories.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				E97C1F541EE9E76800C3B47F /* AppDelegate.swift */,
+				E9F45EE41EFEC71500170C4A /* Categories.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E935426E1EFDB6250017B0DE /* TodayViewController.swift in Sources */,
+				E9F45EE51EFEC71500170C4A /* Categories.swift in Sources */,
 				E97C1F551EE9E76800C3B47F /* AppDelegate.swift in Sources */,
 				E935426C1EFDB5F70017B0DE /* OrganizeTableTableViewController.swift in Sources */,
 				E97C1F5D1EE9E76800C3B47F /* Assigned.xcdatamodeld in Sources */,
