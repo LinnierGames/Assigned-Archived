@@ -11,6 +11,7 @@
         <relationship name="directory" maxCount="1" deletionRule="Nullify" destinationEntity="Directories" inverseName="info" inverseEntity="Directories" syncable="YES"/>
     </entity>
     <entity name="Folders" representedClassName="Folder" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <entity name="Sections" representedClassName="Section" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
     <entity name="Subjects" representedClassName="Subject" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
     <elements>
         <element name="Assignments" positionX="-36" positionY="36" width="128" height="45"/>
@@ -18,5 +19,6 @@
         <element name="DirectoryInfos" positionX="-63" positionY="-18" width="128" height="75"/>
         <element name="Folders" positionX="-45" positionY="18" width="128" height="45"/>
         <element name="Subjects" positionX="-54" positionY="18" width="128" height="45"/>
+        <element name="Sections" positionX="-45" positionY="18" width="128" height="45"/>
     </elements>
 </model>

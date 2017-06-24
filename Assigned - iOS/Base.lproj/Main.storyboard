@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -90,17 +91,17 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="mtD-gl-h8P">
                         <nil key="title"/>
-                        <button key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="R3y-Gw-Rn8">
-                            <rect key="frame" x="112.5" y="7" width="150" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="+ Add Item"/>
-                            <connections>
-                                <action selector="pressAddItem:" destination="VjX-Pz-qVy" eventType="touchUpInside" id="s6b-ds-aqK"/>
-                            </connections>
-                        </button>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" id="GlO-6P-2AK"/>
+                            <barButtonItem systemItem="add" id="4pF-Iu-6lj">
+                                <connections>
+                                    <action selector="pressAddItem:" destination="VjX-Pz-qVy" id="Kqo-8W-p4k"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="buttonAddItem" destination="R3y-Gw-Rn8" id="jke-iA-kRZ"/>
+                        <outlet property="buttonAddItem" destination="4pF-Iu-6lj" id="5Vn-e4-1vB"/>
                     </connections>
                 </tableViewController>
             </objects>
