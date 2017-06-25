@@ -8,6 +8,9 @@
 
 import UIKit
 
+public let CTDisabledOpeque: CGFloat = 0.45
+public let CTDisabledColor = UIColor.darkGray
+
 extension UITextField {
     
     open func setStyleToParagraph(withPlacehodlerText placeholder: String?, withInitalText text: String?) {

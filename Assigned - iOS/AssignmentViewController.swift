@@ -60,6 +60,16 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         let row = fetchedResultsController!.object(at: indexPath)
         
         cell.textLabel!.text = row.title
+        cell.accessoryType = .detailButton
+        if row.isCompleted {
+            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: row.title!)
+            attributeString.addAttribute(NSStrikethroughStyleAttributeName, value: 2, range: NSMakeRange(0, attributeString.length))
+            cell.textLabel!.attributedText = attributeString
+            cell.textLabel!.alpha = CTDisabledOpeque
+        } else {
+            cell.textLabel!.attributedText = NSAttributedString(string: row.title!)
+            cell.textLabel!.alpha = 1
+        }
         
         return cell
     }
@@ -69,19 +79,18 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
     private func updateUI() {
         if let context = container?.viewContext {
             let fetch: NSFetchRequest<Task> = Task.fetchRequest()
-            fetch.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
+            fetch.sortDescriptors = [NSSortDescriptor(key: "isCompleted", ascending: true), NSSortDescriptor(key: "title", ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
             fetch.predicate = NSPredicate(format: "assignment == %@", navController.directory!.info! as! Assignment)
             fetchedResultsController = NSFetchedResultsController<Task>(
                 fetchRequest: fetch,
                 managedObjectContext: context,
-                sectionNameKeyPath: "title",
+                sectionNameKeyPath: nil,
                 cacheName: nil
             )
         }
     }
     
     /*
-     // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -89,6 +98,49 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
      // Pass the selected object to the new view controller.
      }
      */
+    
+    // MARK: Table View
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = fetchedResultsController!.object(at: indexPath)
+        
+        row.isCompleted = row.isCompleted ? false : true
+        
+        delegate?.saveContext()
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            let row = fetchedResultsController!.object(at: indexPath)
+            
+            if let context = container?.viewContext {
+                context.delete(row)
+                
+                delegate?.saveContext()
+            }
+            
+        default:
+            break
+        }
+        
+    }
+    
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Rename Item", message: "enter a title", preferredStyle: .alert)
+        alert.addTextField { [weak self] (textField) in
+            textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: self!.fetchedResultsController?.object(at: indexPath).title)
+        }
+        alert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { [weak self] (action) in
+            self!.fetchedResultsController?.object(at: indexPath).title = alert.textFields!.first!.text
+            
+            self!.delegate?.saveContext()
+            
+        }))
+        
+        self.present( alert, animated: true, completion: nil)
+    }
     
     // MARK: - IBACTIONS
     @IBAction func pressEdit(_ sender: Any) {
@@ -100,13 +152,24 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
     }
     
     @IBAction func pressAddTask(_ sender: Any) {
-        if let context = container?.viewContext {
-            let newTask = Task(context: context)
-            
-            newTask.assignment = navController.directory!.info! as? Assignment
-            
-            delegate?.saveContext()
+        let alert = UIAlertController(title: "New Item", message: "enter a title", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
         }
+        alert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { [weak self] (action) in
+            if let context = self!.container?.viewContext {
+                let newTask = Task(context: context)
+                newTask.title = alert.textFields!.first!.text
+                
+                newTask.assignment = self!.navController.directory!.info! as? Assignment
+                
+                self!.delegate?.saveContext()
+            }
+            
+        }))
+        
+        self.present( alert, animated: true, completion: nil)
     }
     
     // MARK: - LIFE CYCLE
