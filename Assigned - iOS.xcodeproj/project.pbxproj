@@ -19,6 +19,8 @@
 		E97C1F6D1EE9E76800C3B47F /* Assigned___iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C1F6C1EE9E76800C3B47F /* Assigned___iOSTests.swift */; };
 		E97C1F781EE9E76800C3B47F /* Assigned___iOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C1F771EE9E76800C3B47F /* Assigned___iOSUITests.swift */; };
 		E9F45EE51EFEC71500170C4A /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE41EFEC71500170C4A /* Categories.swift */; };
+		E9F45EE71EFF0F9E00170C4A /* AssignmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE61EFF0F9E00170C4A /* AssignmentViewController.swift */; };
+		E9F45EE91EFF13CE00170C4A /* AssignmentNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE81EFF13CE00170C4A /* AssignmentNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		E97C1F771EE9E76800C3B47F /* Assigned___iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Assigned___iOSUITests.swift"; sourceTree = "<group>"; };
 		E97C1F791EE9E76800C3B47F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E9F45EE41EFEC71500170C4A /* Categories.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
+		E9F45EE61EFF0F9E00170C4A /* AssignmentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignmentViewController.swift; sourceTree = "<group>"; };
+		E9F45EE81EFF13CE00170C4A /* AssignmentNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignmentNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +124,8 @@
 				E97C1FC41EE9E8EC00C3B47F /* Controllers */,
 				E935426D1EFDB6250017B0DE /* TodayViewController.swift */,
 				E935426B1EFDB5F70017B0DE /* OrganizeTableTableViewController.swift */,
+				E9F45EE81EFF13CE00170C4A /* AssignmentNavigationController.swift */,
+				E9F45EE61EFF0F9E00170C4A /* AssignmentViewController.swift */,
 				E97C1FC51EE9E8F800C3B47F /* Supporting Files */,
 			);
 			path = "Assigned - iOS";
@@ -301,7 +307,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9F45EE91EFF13CE00170C4A /* AssignmentNavigationController.swift in Sources */,
 				E935426E1EFDB6250017B0DE /* TodayViewController.swift in Sources */,
+				E9F45EE71EFF0F9E00170C4A /* AssignmentViewController.swift in Sources */,
 				E9F45EE51EFEC71500170C4A /* Categories.swift in Sources */,
 				E97C1F551EE9E76800C3B47F /* AppDelegate.swift in Sources */,
 				E935426C1EFDB5F70017B0DE /* OrganizeTableTableViewController.swift in Sources */,

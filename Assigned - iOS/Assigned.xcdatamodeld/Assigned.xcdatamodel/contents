@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Assignments" representedClassName="Assignment" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <entity name="Assignments" representedClassName="Assignment" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class">
+        <attribute name="completed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="dateCreated" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="effort" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="isStarred" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="priority" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="project" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="assignments" inverseEntity="Project" syncable="YES"/>
+        <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Tasks" inverseName="assignment" inverseEntity="Tasks" syncable="YES"/>
+    </entity>
     <entity name="Directories" representedClassName="Directory" syncable="YES" codeGenerationType="class">
         <relationship name="children" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Directories" inverseName="parent" inverseEntity="Directories" syncable="YES"/>
         <relationship name="info" maxCount="1" deletionRule="Cascade" destinationEntity="DirectoryInfos" inverseName="directory" inverseEntity="DirectoryInfos" syncable="YES"/>
@@ -11,14 +21,23 @@
         <relationship name="directory" maxCount="1" deletionRule="Nullify" destinationEntity="Directories" inverseName="info" inverseEntity="Directories" syncable="YES"/>
     </entity>
     <entity name="Folders" representedClassName="Folder" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <entity name="Project" representedClassName="Project" parentEntity="Assignments" syncable="YES" codeGenerationType="class">
+        <relationship name="assignments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Assignments" inverseName="project" inverseEntity="Assignments" syncable="YES"/>
+    </entity>
     <entity name="Sections" representedClassName="Section" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
     <entity name="Subjects" representedClassName="Subject" parentEntity="DirectoryInfos" syncable="YES" codeGenerationType="class"/>
+    <entity name="Tasks" representedClassName="Task" syncable="YES" codeGenerationType="class">
+        <attribute name="title" attributeType="String" defaultValueString="Untitled" syncable="YES"/>
+        <relationship name="assignment" maxCount="1" deletionRule="Nullify" destinationEntity="Assignments" inverseName="tasks" inverseEntity="Assignments" syncable="YES"/>
+    </entity>
     <elements>
-        <element name="Assignments" positionX="-36" positionY="36" width="128" height="45"/>
-        <element name="Directories" positionX="-63" positionY="-18" width="128" height="90"/>
-        <element name="DirectoryInfos" positionX="-63" positionY="-18" width="128" height="75"/>
-        <element name="Folders" positionX="-45" positionY="18" width="128" height="45"/>
-        <element name="Subjects" positionX="-54" positionY="18" width="128" height="45"/>
-        <element name="Sections" positionX="-45" positionY="18" width="128" height="45"/>
+        <element name="Assignments" positionX="-281" positionY="27" width="128" height="178"/>
+        <element name="Directories" positionX="-38" positionY="-216" width="128" height="90"/>
+        <element name="DirectoryInfos" positionX="-225" positionY="-108" width="128" height="75"/>
+        <element name="Folders" positionX="-29" positionY="27" width="128" height="45"/>
+        <element name="Subjects" positionX="18" positionY="-63" width="128" height="45"/>
+        <element name="Sections" positionX="-56" positionY="108" width="128" height="45"/>
+        <element name="Tasks" positionX="-234" positionY="153" width="128" height="30"/>
+        <element name="Project" positionX="-234" positionY="81" width="128" height="30"/>
     </elements>
 </model>

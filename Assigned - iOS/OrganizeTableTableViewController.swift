@@ -138,6 +138,18 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        if let identifier = segue.identifier {
+            switch identifier {
+            case "show assignment":
+                let assignmentVC = segue.destination as! AssignmentNavigationController
+                let directory = sender as! Directory
+                assignmentVC.directory = directory
+                
+            default:
+                break
+            }
+            
+        }
     }
     
     // MARK: Table view delegate
@@ -155,6 +167,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
                 self.navigationController?.pushViewController( vc, animated: true)
                 
             } else if row.info! is Assignment {
+                self.performSegue(withIdentifier: "show assignment", sender: row)
                 
             } else {
                 assertionFailure("tableView:didSelectRowAt: -- failed to cast the selected object from row")
@@ -222,7 +235,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
                 alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
                 alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
                     if let context = self!.container?.viewContext {
-                        let newClass = Subject(context: context)
+                        let newClass = Folder(context: context)
                         newClass.title = alert.textFields!.first!.text
                         
                         _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
@@ -298,6 +311,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
             alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
                 if let context = self!.container?.viewContext {
                     let newClass = Assignment(context: context)
+                    newClass.dateCreated = NSDate()
                     newClass.title = alert.textFields!.first!.text
                     
                     _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
