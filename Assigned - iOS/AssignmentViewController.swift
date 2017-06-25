@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class AssignmentViewController: UIViewController {
+class AssignmentViewController: UIViewController, NSFetchedResultsControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     private var delegate: AppDelegate? {
         return UIApplication.shared.delegate as? AppDelegate
@@ -21,6 +21,21 @@ class AssignmentViewController: UIViewController {
     
     private var navController: AssignmentNavigationController {
         return self.navigationController as! AssignmentNavigationController
+    }
+    
+    fileprivate var fetchedResultsController: NSFetchedResultsController<Task>? {
+        didSet {
+            if let controller = fetchedResultsController {
+                do {
+                    controller.delegate = self
+                    try controller.performFetch()
+                    
+                    tableView.reloadData()
+                } catch {
+                    print("ERROR: \(error.localizedDescription)")
+                }
+            }
+        }
     }
     
     @IBOutlet weak var labelTitle: UILabel! {
@@ -35,9 +50,35 @@ class AssignmentViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var tableView: UITableView!
+    
     // MARK: - RETURN VALUES
     
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
+        let row = fetchedResultsController!.object(at: indexPath)
+        
+        cell.textLabel!.text = row.title
+        
+        return cell
+    }
+    
     // MARK: - VOID METHODS
+    
+    private func updateUI() {
+        if let context = container?.viewContext {
+            let fetch: NSFetchRequest<Task> = Task.fetchRequest()
+            fetch.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
+            fetch.predicate = NSPredicate(format: "assignment == %@", navController.directory!.info! as! Assignment)
+            fetchedResultsController = NSFetchedResultsController<Task>(
+                fetchRequest: fetch,
+                managedObjectContext: context,
+                sectionNameKeyPath: "title",
+                cacheName: nil
+            )
+        }
+    }
     
     /*
      // MARK: - Navigation
@@ -58,10 +99,22 @@ class AssignmentViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func pressAddTask(_ sender: Any) {
+        if let context = container?.viewContext {
+            let newTask = Task(context: context)
+            
+            newTask.assignment = navController.directory!.info! as? Assignment
+            
+            delegate?.saveContext()
+        }
+    }
+    
     // MARK: - LIFE CYCLE
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        updateUI()
 
         // Do any additional setup after loading the view.
     }
@@ -71,4 +124,76 @@ class AssignmentViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+}
+
+extension AssignmentViewController
+{
+    // MARK: UITableViewDataSource
+    
+    func numberOfSections(in tableView: UITableView) -> Int
+    {
+        return fetchedResultsController?.sections?.count ?? 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        if let sections = fetchedResultsController?.sections, sections.count > 0 {
+            return sections[section].numberOfObjects
+        } else {
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?
+    {   if let sections = fetchedResultsController?.sections, sections.count > 0 {
+        return sections[section].name
+    } else {
+        return nil
+        }
+    }
+
+    func sectionIndexTitles(for tableView: UITableView) -> [String]?
+    {
+        return fetchedResultsController?.sectionIndexTitles
+    }
+
+    func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int
+    {
+        return fetchedResultsController?.section(forSectionIndexTitle: title, at: index) ?? 0
+    }
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
+        tableView.beginUpdates()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType)
+    {
+        switch type {
+        case .insert: tableView.insertSections([sectionIndex], with: .fade)
+        case .delete: tableView.deleteSections([sectionIndex], with: .fade)
+        default: break
+        }
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
+    {
+        switch type {
+        case .insert:
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
+        case .delete:
+            tableView.deleteRows(at: [indexPath!], with: .fade)
+        case .update:
+            tableView.reloadRows(at: [indexPath!], with: .fade)
+        case .move:
+            tableView.deleteRows(at: [indexPath!], with: .fade)
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
+        }
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
+        tableView.endUpdates()
+    }
+    
 }
