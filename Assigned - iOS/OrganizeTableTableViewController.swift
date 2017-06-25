@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class OrganizeTableTableViewController: FetchedResultsTableViewController {
+class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveTableViewControllerDelegate {
     
     private var delegate: AppDelegate? {
         return UIApplication.shared.delegate as? AppDelegate
@@ -19,12 +19,14 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
         return delegate?.persistentContainer
     }
     
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        
-        let editingInvert = editing ? false : true
-        buttonAddItem.isEnabled = editingInvert
-        self.navigationItem.setHidesBackButton(editing, animated: true)
+    private var selectedRowItems: [Directory] = [Directory]() {
+        didSet {
+            if selectedRowItems.count > 0 {
+                navigationItem.rightBarButtonItem!.title = "Next"
+            } else {
+                navigationItem.rightBarButtonItem!.title = "Done"
+            }
+        }
     }
     
     fileprivate var fetchedResultsController: NSFetchedResultsController<Directory>? {
@@ -144,20 +146,36 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
                 let assignmentVC = segue.destination as! AssignmentNavigationController
                 let directory = sender as! Directory
                 assignmentVC.directory = directory
-                
+            case "show move":
+                let moveNC = segue.destination as! MoveNavigationController
+                moveNC.itemsToBeMoved = selectedRowItems
+                moveNC.parentDelegate = self
             default:
                 break
             }
-            
         }
     }
     
-    // MARK: Table view delegate
+    // MARK: Table view
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        if (navigationItem.rightBarButtonItem!.title == "Next") {
+            self.performSegue(withIdentifier: "show move", sender: nil)
+        } else {
+            super.setEditing(editing, animated: animated)
+            
+            let editingInvert = editing ? false : true
+            buttonAddItem.isEnabled = editingInvert
+            self.navigationItem.setHidesBackButton(editing, animated: true)
+            
+        }
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = fetchedResultsController!.object(at: indexPath)
         if tableView.isEditing {
             // navController.selectedItems.append(row)
+            selectedRowItems.append(row)
             
         } else {
             if row.isDirectory {
@@ -175,6 +193,15 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
             
         }
         
+    }
+    
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        let row = fetchedResultsController!.object(at: indexPath)
+        if tableView.isEditing {
+            if let index = selectedRowItems.index(of: row) {
+                selectedRowItems.remove(at: index)
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
@@ -218,6 +245,13 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController {
      
      }
      */
+    
+    // MARK: Move Table View Delegate
+    
+    func controller(moveTableView: MoveTableViewController, didCompleteWithParentDestination: Directory?) {
+        selectedRowItems.removeAll()
+        setEditing(false, animated: true)
+    }
     
     // MARK: - IBACTIONS
     

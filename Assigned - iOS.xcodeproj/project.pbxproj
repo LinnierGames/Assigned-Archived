@@ -21,6 +21,8 @@
 		E9F45EE51EFEC71500170C4A /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE41EFEC71500170C4A /* Categories.swift */; };
 		E9F45EE71EFF0F9E00170C4A /* AssignmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE61EFF0F9E00170C4A /* AssignmentViewController.swift */; };
 		E9F45EE91EFF13CE00170C4A /* AssignmentNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EE81EFF13CE00170C4A /* AssignmentNavigationController.swift */; };
+		E9F45EEC1F0025C000170C4A /* MoveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EEA1F0025C000170C4A /* MoveNavigationController.swift */; };
+		E9F45EED1F0025C000170C4A /* MoveTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F45EEB1F0025C000170C4A /* MoveTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,8 @@
 		E9F45EE41EFEC71500170C4A /* Categories.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
 		E9F45EE61EFF0F9E00170C4A /* AssignmentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignmentViewController.swift; sourceTree = "<group>"; };
 		E9F45EE81EFF13CE00170C4A /* AssignmentNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignmentNavigationController.swift; sourceTree = "<group>"; };
+		E9F45EEA1F0025C000170C4A /* MoveNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoveNavigationController.swift; sourceTree = "<group>"; };
+		E9F45EEB1F0025C000170C4A /* MoveTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoveTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +128,8 @@
 				E97C1FC41EE9E8EC00C3B47F /* Controllers */,
 				E935426D1EFDB6250017B0DE /* TodayViewController.swift */,
 				E935426B1EFDB5F70017B0DE /* OrganizeTableTableViewController.swift */,
+				E9F45EEA1F0025C000170C4A /* MoveNavigationController.swift */,
+				E9F45EEB1F0025C000170C4A /* MoveTableViewController.swift */,
 				E9F45EE81EFF13CE00170C4A /* AssignmentNavigationController.swift */,
 				E9F45EE61EFF0F9E00170C4A /* AssignmentViewController.swift */,
 				E97C1FC51EE9E8F800C3B47F /* Supporting Files */,
@@ -307,6 +313,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9F45EEC1F0025C000170C4A /* MoveNavigationController.swift in Sources */,
+				E9F45EED1F0025C000170C4A /* MoveTableViewController.swift in Sources */,
 				E9F45EE91EFF13CE00170C4A /* AssignmentNavigationController.swift in Sources */,
 				E935426E1EFDB6250017B0DE /* TodayViewController.swift in Sources */,
 				E9F45EE71EFF0F9E00170C4A /* AssignmentViewController.swift in Sources */,

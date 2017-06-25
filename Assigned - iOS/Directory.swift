@@ -49,4 +49,25 @@ extension Directory {
         return (self.info! is Folder || self.info! is Subject)
     }
     
+    /**
+     Counts the number of repeating classes in the children set
+     - Returns: dictionary with the count of each class title
+     */
+    var childrenInfo : [String:Int] {
+        var dic = [String:Int]()
+        
+        for child in (children?.allObjects)! as! [Directory] {
+            if let key = String(NSStringFromClass(child.info!.classForCoder)) {
+                var count: Int = dic[key] ?? 0
+                count += 1
+                dic[key] = count
+                
+            }
+            
+        }
+        
+        return dic
+        
+    }
+    
 }
