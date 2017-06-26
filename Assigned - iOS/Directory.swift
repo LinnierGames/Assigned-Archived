@@ -19,6 +19,8 @@ extension Directory {
             return "I am a Section"
         case is Subject:
             return "I am a Subject"
+        case is Project:
+            return "I am a Project"
         case is Assignment:
             return "I am an Assignment"
         default:
@@ -61,7 +63,7 @@ extension Directory {
     }
     
     var isDirectory: Bool {
-        return (self.info! is Folder || self.info! is Subject)
+        return (self.info! is Folder || self.info! is Subject || self.info! is Project)
     }
     
     /**

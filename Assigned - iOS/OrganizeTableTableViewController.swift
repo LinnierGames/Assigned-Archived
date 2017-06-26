@@ -107,7 +107,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
         
     }
     
-    private func prompt<T>(type:T.Type, withTitle promptTitle: String?, message promptMessage: String = "enter a title") {
+    private func prompt<T>(type:T.Type, withTitle promptTitle: String?, message promptMessage: String = "enter a title", willComplete: @escaping (T) -> Void = {_ in }, didComplete: @escaping (T) -> Void = {_ in }) {
         let alert = UIAlertController(title: promptTitle, message: promptMessage, preferredStyle: .alert)
         alert.addTextField { (textField) in
             textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
@@ -122,6 +122,8 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
                     newClass = Subject(context: context)
                 } else if (type is Section.Type) {
                     newClass = Section(context: context)
+                } else if (type is Project.Type) {
+                    newClass = Project(context: context)
                 } else if (type is Assignment.Type) {
                     newClass = Assignment(context: context)
                 } else {
@@ -129,9 +131,13 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
                 }
                 newClass.title = alert.inputField.text
                 
+                willComplete(newClass as! T)
+                
                 _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
                 
                 self!.appDelegate?.saveContext()
+                
+                didComplete(newClass as! T)
                 
                 self!.updateUI()
                 
@@ -268,34 +274,53 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
     
     @IBOutlet weak var buttonAddItem: UIBarButtonItem!
     @IBAction func pressAddItem(_ sender: Any) {
-        let actionType = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        if currentDirectory == nil || currentDirectory?.info! is Folder {
-            actionType.addAction( UIAlertAction(title: "Folder", style: .default, handler: { [weak self] (action) in
-                self!.prompt(type: Folder.self, withTitle: "New Folder")
+        if currentDirectory?.info! is Project {
+            prompt(type: Assignment.self, withTitle: "New Assignment", willComplete: { (obj) in
+                obj.dateCreated = NSDate()
+            })
+            
+        } else {
+            let actionType = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            
+            if currentDirectory == nil || currentDirectory?.info! is Folder {
+                actionType.addAction( UIAlertAction(title: "Folder", style: .default, handler: { [weak self] (action) in
+                    self!.prompt(type: Folder.self, withTitle: "New Folder")
+                }))
+                
+                actionType.addAction( UIAlertAction(title: "Subject", style: .default, handler: { [weak self] (action) in
+                    self!.prompt(type: Subject.self, withTitle: "New Subject")
+                }))
+                
+            }
+            
+            if currentDirectory?.info! is Subject {
+                actionType.addAction( UIAlertAction(title: "Section", style: .default, handler: { [weak self] (action) in
+                    self!.prompt(type: Section.self, withTitle: "New Section")
+                }))
+                
+            }
+            
+            if !(currentDirectory?.info! is Project) {
+                actionType.addAction( UIAlertAction(title: "Project", style: .default, handler: { [weak self] (action) in
+                    self!.prompt(type: Project.self, withTitle: "New Project", willComplete: { (obj) -> Void in
+                        obj.dateCreated = NSDate()
+                    })
+                }))
+                
+            }
+            
+            actionType.addAction( UIAlertAction(title: "Assignment", style: .default, handler: { [weak self] (action) in
+                self!.prompt(type: Assignment.self, withTitle: "New Assignment", willComplete: { (obj) -> Void in
+                    obj.dateCreated = NSDate()
+                })
             }))
             
-            actionType.addAction( UIAlertAction(title: "Subject", style: .default, handler: { [weak self] (action) in
-                self!.prompt(type: Subject.self, withTitle: "New Subject")
-            }))
+            actionType.addAction( UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            self.present(actionType, animated: true, completion: nil)
+
             
         }
-        
-        if currentDirectory?.info! is Subject {
-            actionType.addAction( UIAlertAction(title: "Section", style: .default, handler: { [weak self] (action) in
-                self!.prompt(type: Subject.self, withTitle: "New Section")
-            }))
-            
-        }
-        
-        actionType.addAction( UIAlertAction(title: "Assignment", style: .default, handler: { [weak self] (action) in
-            self!.prompt(type: Assignment.self, withTitle: "New Assignment")
-        }))
-        
-        actionType.addAction( UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-        self.present(actionType, animated: true, completion: nil)
-        
     }
     
     // MARK: - LIFE CYCLE
