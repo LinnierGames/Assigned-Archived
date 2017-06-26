@@ -11,19 +11,19 @@ import CoreData
 
 class MoveTableViewController: UITableViewController {
     
-    var appDelegate: AppDelegate? {
-        return UIApplication.shared.delegate as? AppDelegate
+    private var appDelegate: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
     }
     
-    var container: NSPersistentContainer? {
-        return appDelegate?.persistentContainer
+    private var container: NSPersistentContainer? {
+        return appDelegate.persistentContainer
     }
     
-    var navController: MoveNavigationController {
+    private var navController: MoveNavigationController {
         return navigationController as! MoveNavigationController
     }
     
-    var arrayM = [Directory]()
+    private var arrayM = [Directory]()
     
     var currentDirectory: Directory?
     
@@ -44,18 +44,6 @@ class MoveTableViewController: UITableViewController {
         
         let row = arrayM[indexPath.row]
         let rowItem = row.info!
-        
-        func setCellState(enabled: Bool) {
-            if enabled {
-                cell.textLabel!.alpha = 1
-                cell.detailTextLabel!.alpha = 1
-                cell.isUserInteractionEnabled = true
-            } else {
-                cell.textLabel!.alpha = 0.3
-                cell.detailTextLabel!.alpha = 0.3
-                cell.isUserInteractionEnabled = false
-            }
-        }
 
         // Configure the cell...
         cell.textLabel!.text = rowItem.title ?? "Untitled"
@@ -66,15 +54,16 @@ class MoveTableViewController: UITableViewController {
             } else {
                 cell.detailTextLabel!.text = "No Sub Folders"
             }
-            setCellState(enabled: true)
+            cell.setState(enabled: true)
         } else {
             cell.accessoryType = .none
             cell.detailTextLabel!.text = nil
-            setCellState(enabled: false)
+            cell.setState(enabled: false)
         }
         
+        //Avoid moving an item within itself
         if (navController.itemsToBeMoved?.contains(row))! {
-            setCellState(enabled: false)
+            cell.setState(enabled: false)
         }
 
         return cell
@@ -113,12 +102,13 @@ class MoveTableViewController: UITableViewController {
     // MARK: - IBACTIONS
     
     @IBAction func pressDone(_ sender: Any) {
-        //#warning MISSING VALIDATION
+        //#warning MISSING VALIDATION of moving items within other limited items
+        //e.g. moving a folder inside a subject, etc
         if let items = navController.itemsToBeMoved {
             for item in items {
                 item.parent = currentDirectory
             }
-            appDelegate?.saveContext()
+            appDelegate.saveContext()
             navController.parentDelegate?.controller(moveTableView: self, didCompleteWithParentDestination: currentDirectory)
             self.dismiss(animated: true, completion: nil)
         }

@@ -11,12 +11,12 @@ import CoreData
 
 class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveTableViewControllerDelegate {
     
-    private var delegate: AppDelegate? {
+    private var appDelegate: AppDelegate? {
         return UIApplication.shared.delegate as? AppDelegate
     }
     
     private var container: NSPersistentContainer? {
-        return delegate?.persistentContainer
+        return appDelegate?.persistentContainer
     }
     
     private var selectedRowItems: [Directory] = [Directory]() {
@@ -80,18 +80,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
             cell.accessoryType = .detailButton
         }
         
-        switch row.info! {
-        case is Folder:
-            cell.detailTextLabel!.text = "I am a Folder"
-        case is Section:
-            cell.detailTextLabel!.text = "I am a Section"
-        case is Subject:
-            cell.detailTextLabel!.text = "I am a Subject"
-        case is Assignment:
-            cell.detailTextLabel!.text = "I am an Assignment"
-        default:
-            break
-        }
+        cell.detailTextLabel!.text = String(describing: row)
         
         return cell
     }
@@ -118,22 +107,39 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
         
     }
     
-    private func prompt(withTitle promptTitle: String?, message promptMessage: String?, complition: ((UIAlertAction) -> Swift.Void)?) {
+    private func prompt<T>(type:T.Type, withTitle promptTitle: String?, message promptMessage: String = "enter a title") {
         let alert = UIAlertController(title: promptTitle, message: promptMessage, preferredStyle: .alert)
         alert.addTextField { (textField) in
-            textField.autocapitalizationType = .words
-            textField.autocorrectionType = .default
+            textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Add", style: .default, handler: complition))
+        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
+            if let context = self!.container?.viewContext {
+                let newClass: DirectoryInfo
+                if (type is Folder.Type) {
+                    newClass = Folder(context: context)
+                } else if (type is Subject.Type) {
+                    newClass = Subject(context: context)
+                } else if (type is Section.Type) {
+                    newClass = Section(context: context)
+                } else if (type is Assignment.Type) {
+                    newClass = Assignment(context: context)
+                } else {
+                    newClass = DirectoryInfo(context: context)
+                }
+                newClass.title = alert.inputField.text
+                
+                _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
+                
+                self!.appDelegate?.saveContext()
+                
+                self!.updateUI()
+                
+            }
+        }))
         
         self.present( alert, animated: true, completion: nil)
         
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -154,6 +160,11 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
                 break
             }
         }
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     // MARK: Table view
@@ -215,7 +226,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
         alert.addAction( UIAlertAction(title: "Save", style: .default, handler: { [weak self] (action) in
             rowItem.info!.title = alert.textFields!.first!.text
             
-            self!.delegate?.saveContext()
+            self!.appDelegate?.saveContext()
         }))
         
         self.present(alert, animated: true, completion: nil)
@@ -231,7 +242,7 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
             if let context = container?.viewContext {
                 context.delete(row)
                 
-                delegate?.saveContext()
+                appDelegate?.saveContext()
             }
             
         } else if editingStyle == .insert {
@@ -260,104 +271,25 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
         let actionType = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         if currentDirectory == nil || currentDirectory?.info! is Folder {
-            
-            actionType.addAction( UIAlertAction(title: "Folder", style: .default, handler: { (action) in
-                let alert = UIAlertController(title: "Add a Folder", message: "enter a title", preferredStyle: .alert)
-                alert.addTextField { (textField) in
-                    textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
-                }
-                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-                alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
-                    if let context = self!.container?.viewContext {
-                        let newClass = Folder(context: context)
-                        newClass.title = alert.textFields!.first!.text
-                        
-                        _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
-                        
-                        self!.delegate?.saveContext()
-                        
-                        self!.updateUI()
-                        
-                    }
-                }))
-                
-                self.present( alert, animated: true, completion: nil)
+            actionType.addAction( UIAlertAction(title: "Folder", style: .default, handler: { [weak self] (action) in
+                self!.prompt(type: Folder.self, withTitle: "New Folder")
             }))
             
-            actionType.addAction( UIAlertAction(title: "Subject", style: .default, handler: { (action) in
-                let alert = UIAlertController(title: "Add a Subject", message: "enter a title", preferredStyle: .alert)
-                alert.addTextField { (textField) in
-                    textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
-                }
-                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-                alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
-                    if let context = self!.container?.viewContext {
-                        let newClass = Subject(context: context)
-                        newClass.title = alert.textFields!.first!.text
-                        
-                        _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
-                        
-                        self!.delegate?.saveContext()
-                        
-                        self!.updateUI()
-                        
-                    }
-                }))
-                
-                self.present( alert, animated: true, completion: nil)
+            actionType.addAction( UIAlertAction(title: "Subject", style: .default, handler: { [weak self] (action) in
+                self!.prompt(type: Subject.self, withTitle: "New Subject")
             }))
             
         }
         
         if currentDirectory?.info! is Subject {
-            
-            actionType.addAction( UIAlertAction(title: "Section", style: .default, handler: { (action) in
-                let alert = UIAlertController(title: "Add a Section", message: "enter a title", preferredStyle: .alert)
-                alert.addTextField { (textField) in
-                    textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
-                }
-                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-                alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
-                    if let context = self!.container?.viewContext {
-                        let newClass = Section(context: context)
-                        newClass.title = alert.textFields!.first!.text
-                        
-                        _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
-                        
-                        self!.delegate?.saveContext()
-                        
-                        self!.updateUI()
-                        
-                    }
-                }))
-                
-                self.present( alert, animated: true, completion: nil)
+            actionType.addAction( UIAlertAction(title: "Section", style: .default, handler: { [weak self] (action) in
+                self!.prompt(type: Subject.self, withTitle: "New Section")
             }))
             
         }
         
-        actionType.addAction( UIAlertAction(title: "Assignment", style: .default, handler: { (action) in
-            let alert = UIAlertController(title: "Add an Assignment", message: "enter a title", preferredStyle: .alert)
-            alert.addTextField { (textField) in
-                textField.setStyleToParagraph(withPlacehodlerText: nil, withInitalText: nil)
-            }
-            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-            alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { [weak self] (action) in
-                if let context = self!.container?.viewContext {
-                    let newClass = Assignment(context: context)
-                    newClass.dateCreated = NSDate()
-                    newClass.title = alert.textFields!.first!.text
-                    
-                    _ = Directory.createDirectory(forDirectoryInfo: newClass, withParent: self!.currentDirectory, in: context)
-                    
-                    self!.delegate?.saveContext()
-                    
-                    self!.updateUI()
-                    
-                }
-            }))
-            
-            self.present( alert, animated: true, completion: nil)
+        actionType.addAction( UIAlertAction(title: "Assignment", style: .default, handler: { [weak self] (action) in
+            self!.prompt(type: Assignment.self, withTitle: "New Assignment")
         }))
         
         actionType.addAction( UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

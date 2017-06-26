@@ -11,6 +11,10 @@ import UIKit
 class AssignmentNavigationController: UINavigationController {
     
     open var directory: Directory?
+    
+    open var assignment: Assignment {
+        return directory?.info! as! Assignment
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

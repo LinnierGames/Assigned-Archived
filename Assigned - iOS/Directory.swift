@@ -11,6 +11,21 @@ import CoreData
 
 extension Directory {
     
+    override public var description: String {
+        switch self.info! {
+        case is Folder:
+            return "I am a Folder"
+        case is Section:
+            return "I am a Section"
+        case is Subject:
+            return "I am a Subject"
+        case is Assignment:
+            return "I am an Assignment"
+        default:
+            return NSStringFromClass(self.info!.classForCoder)
+        }
+    }
+    
     static func createDirectory( forDirectoryInfo info: DirectoryInfo, withParent parent: Directory?, `in` context: NSManagedObjectContext) -> Directory {
         let newHierarchy = Directory(context: context)
         newHierarchy.parent = parent

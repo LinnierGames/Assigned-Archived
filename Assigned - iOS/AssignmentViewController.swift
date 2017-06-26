@@ -11,12 +11,12 @@ import CoreData
 
 class AssignmentViewController: UIViewController, NSFetchedResultsControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
-    private var delegate: AppDelegate? {
-        return UIApplication.shared.delegate as? AppDelegate
+    private var appDelegate: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
     }
     
     private var container: NSPersistentContainer? {
-        return delegate?.persistentContainer
+        return appDelegate.persistentContainer
     }
     
     private var navController: AssignmentNavigationController {
@@ -40,13 +40,13 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
     
     @IBOutlet weak var labelTitle: UILabel! {
         didSet {
-            labelTitle.text = navController.directory!.info!.title
+            labelTitle.text = navController.assignment.title
         }
     }
     
     @IBOutlet weak var textviewNotes: UITextView! {
         didSet {
-            textviewNotes.text = (navController.directory!.info! as! Assignment).notes
+            textviewNotes.text = navController.assignment.notes
         }
     }
     
@@ -62,9 +62,7 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         cell.textLabel!.text = row.title
         cell.accessoryType = .detailButton
         if row.isCompleted {
-            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: row.title!)
-            attributeString.addAttribute(NSStrikethroughStyleAttributeName, value: 2, range: NSMakeRange(0, attributeString.length))
-            cell.textLabel!.attributedText = attributeString
+            cell.textLabel!.attributedText = CTAttributedStringStrikeOut(string: row.title!)
             cell.textLabel!.alpha = CTDisabledOpeque
         } else {
             cell.textLabel!.attributedText = NSAttributedString(string: row.title!)
@@ -80,7 +78,7 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         if let context = container?.viewContext {
             let fetch: NSFetchRequest<Task> = Task.fetchRequest()
             fetch.sortDescriptors = [NSSortDescriptor(key: "isCompleted", ascending: true), NSSortDescriptor(key: "title", ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
-            fetch.predicate = NSPredicate(format: "assignment == %@", navController.directory!.info! as! Assignment)
+            fetch.predicate = NSPredicate(format: "assignment == %@", navController.assignment)
             fetchedResultsController = NSFetchedResultsController<Task>(
                 fetchRequest: fetch,
                 managedObjectContext: context,
@@ -106,7 +104,7 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         
         row.isCompleted = row.isCompleted ? false : true
         
-        delegate?.saveContext()
+        appDelegate.saveContext()
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -114,11 +112,9 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         case .delete:
             let row = fetchedResultsController!.object(at: indexPath)
             
-            if let context = container?.viewContext {
-                context.delete(row)
-                
-                delegate?.saveContext()
-            }
+            navController.assignment.removeFromTasks(row)
+            
+            appDelegate.saveContext()
             
         default:
             break
@@ -133,9 +129,9 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         }
         alert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { [weak self] (action) in
-            self!.fetchedResultsController?.object(at: indexPath).title = alert.textFields!.first!.text
+            self!.fetchedResultsController?.object(at: indexPath).title = alert.inputField.text
             
-            self!.delegate?.saveContext()
+            self!.appDelegate.saveContext()
             
         }))
         
@@ -160,11 +156,11 @@ class AssignmentViewController: UIViewController, NSFetchedResultsControllerDele
         alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { [weak self] (action) in
             if let context = self!.container?.viewContext {
                 let newTask = Task(context: context)
-                newTask.title = alert.textFields!.first!.text
+                newTask.title = alert.inputField.text
                 
-                newTask.assignment = self!.navController.directory!.info! as? Assignment
+                self!.navController.assignment.addToTasks(newTask)
                 
-                self!.delegate?.saveContext()
+                self!.appDelegate.saveContext()
             }
             
         }))
