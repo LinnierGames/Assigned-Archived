@@ -10,45 +10,29 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Assigned - iOS/OrganizeTableTableViewController.swift"
-            timestampString = "520153113.224395"
+            timestampString = "520221604.386304"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
             landmarkName = "prompt(type:withTitle:message:willComplete:didComplete:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assigned.OrganizeTableTableViewController.((prompt in _F736D2370801A4EAFFE5EE3F491DF4CB) &lt;A&gt; (type : A.Type, withTitle : Swift.Optional&lt;Swift.String&gt;, message : Swift.String, willComplete : (Assigned.DirectoryInfo) -&gt; (), didComplete : (Assigned.DirectoryInfo) -&gt; ()) -&gt; ()).(closure #2)"
-                  moduleName = "Assigned"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ericksanc/Developer/My%20Projects/Assigned!/Universal%20iOS/Assigned/Assigned%20-%20iOS/OrganizeTableTableViewController.swift"
-                  timestampString = "520153155.987813"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "117"
-                  endingLineNumber = "117"
-                  offsetFromSymbolStart = "66">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assigned.OrganizeTableTableViewController.((prompt in _F736D2370801A4EAFFE5EE3F491DF4CB) &lt;A&gt; (type : A.Type, withTitle : Swift.Optional&lt;Swift.String&gt;, message : Swift.String, willComplete : (Assigned.DirectoryInfo) -&gt; (), didComplete : (Assigned.DirectoryInfo) -&gt; ()) -&gt; ()).(closure #2)"
-                  moduleName = "Assigned"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ericksanc/Developer/My%20Projects/Assigned!/Universal%20iOS/Assigned/Assigned%20-%20iOS/OrganizeTableTableViewController.swift"
-                  timestampString = "520153155.991276"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "117"
-                  endingLineNumber = "117"
-                  offsetFromSymbolStart = "434">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Assigned - iOS/OrganizeTableTableViewController.swift"
+            timestampString = "520236423.301085"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "tableView(_:cellForRowAt:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

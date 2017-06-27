@@ -293,12 +293,12 @@ class OrganizeTableTableViewController: FetchedResultsTableViewController, MoveT
                 
             }
             
-            if currentDirectory?.info! is Subject {
-                actionType.addAction( UIAlertAction(title: "Section", style: .default, handler: { [weak self] (action) in
-                    self!.prompt(type: Section.self, withTitle: "New Section")
-                }))
-                
-            }
+//            if currentDirectory?.info! is Subject {
+//                actionType.addAction( UIAlertAction(title: "Section", style: .default, handler: { [weak self] (action) in
+//                    self!.prompt(type: Section.self, withTitle: "New Section")
+//                }))
+//                
+//            }
             
             if !(currentDirectory?.info! is Project) {
                 actionType.addAction( UIAlertAction(title: "Project", style: .default, handler: { [weak self] (action) in
